@@ -1,6 +1,11 @@
 """Document loading and word-based sliding-window chunking for RAG indexing."""
 
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from src.config import CHUNK_OVERLAP, CHUNK_SIZE
 
 
 def load_document(file_path: str) -> str:
@@ -23,8 +28,8 @@ def load_document(file_path: str) -> str:
 
 def create_chunks(
     text: str,
-    chunk_size: int = 75,
-    overlap: int = 15,
+    chunk_size: int = CHUNK_SIZE,
+    overlap: int = CHUNK_OVERLAP,
 ) -> list[str]:
     """Split text into overlapping word-based chunks using a sliding window.
 

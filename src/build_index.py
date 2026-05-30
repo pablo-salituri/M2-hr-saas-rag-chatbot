@@ -7,6 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.chunking import create_chunks, load_document
+from src.config import CHUNKS_PATH, FAQ_DOCUMENT_PATH, FAISS_INDEX_PATH, STORAGE_DIR
 from src.embeddings import generate_embeddings
 from src.vector_store import build_faiss_index, save_chunks, save_faiss_index
 
@@ -14,10 +15,10 @@ from src.vector_store import build_faiss_index, save_chunks, save_faiss_index
 def main() -> None:
     """Load document, build embeddings and FAISS index, save artifacts."""
     project_root = Path(__file__).resolve().parent.parent
-    document_path = project_root / "data" / "faq_document.txt"
-    storage_dir = project_root / "storage"
-    index_path = storage_dir / "faiss.index"
-    chunks_path = storage_dir / "chunks.json"
+    document_path = project_root / FAQ_DOCUMENT_PATH
+    storage_dir = project_root / STORAGE_DIR
+    index_path = project_root / FAISS_INDEX_PATH
+    chunks_path = project_root / CHUNKS_PATH
 
     content = load_document(str(document_path))
     print("Document loaded")
