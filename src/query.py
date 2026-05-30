@@ -13,6 +13,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.config import CHUNKS_PATH, FAISS_INDEX_PATH, TOP_K
 from src.embeddings import generate_embeddings
+from src.evaluator import evaluate_answer
+from src.output_manager import save_query_result
 
 SYSTEM_PROMPT = """You are an internal HR support assistant.
 
@@ -187,6 +189,10 @@ def main() -> None:
     context = build_context(similar_chunks)
     answer = generate_answer(question, context)
     response = build_response(question, answer, similar_chunks)
+    evaluation = evaluate_answer(
+        question, answer, similar_chunks
+    )
+    save_query_result({**response, "evaluation": evaluation})
 
     print(json.dumps(response, indent=2, ensure_ascii=False))
 
