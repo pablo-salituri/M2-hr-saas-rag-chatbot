@@ -154,6 +154,7 @@ def build_response(
     question: str,
     answer: str,
     chunks: list[dict],
+    evaluation: dict,
 ) -> dict:
     """Build the final RAG response payload.
 
@@ -161,14 +162,17 @@ def build_response(
         question: Original user question.
         answer: LLM-generated answer.
         chunks: Retrieved chunks with scores.
+        evaluation: Evaluator result with score and reason.
 
     Returns:
-        Response dictionary with user_question, system_answer, and chunks_related.
+        Response dictionary with user_question, system_answer, chunks_related,
+        and evaluation.
     """
     return {
         "user_question": question,
         "system_answer": answer,
         "chunks_related": chunks,
+        "evaluation": evaluation,
     }
 
 
@@ -188,11 +192,9 @@ def main() -> None:
     )
     context = build_context(similar_chunks)
     answer = generate_answer(question, context)
-    response = build_response(question, answer, similar_chunks)
-    evaluation = evaluate_answer(
-        question, answer, similar_chunks
-    )
-    save_query_result({**response, "evaluation": evaluation})
+    evaluation = evaluate_answer(question, answer, similar_chunks)
+    response = build_response(question, answer, similar_chunks, evaluation)
+    save_query_result(response)
 
     print(json.dumps(response, indent=2, ensure_ascii=False))
 
