@@ -3,6 +3,9 @@
 import json
 import os
 import sys
+import threading
+import time
+from datetime import datetime
 from pathlib import Path
 
 import faiss
@@ -14,7 +17,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from src.config import CHUNKS_PATH, FAISS_INDEX_PATH, TOP_K
 from src.embeddings import generate_embeddings
 from src.evaluator import evaluate_answer
-from src.output_manager import save_query_result
 
 SYSTEM_PROMPT = """You are an internal HR support assistant.
 
@@ -25,6 +27,8 @@ If the answer cannot be found in the context, say:
 "The information is not available in the documentation."
 
 Keep answers concise and factual."""
+
+_SPINNER_FRAMES = ("|", "/", "-", "\\")
 
 
 def load_chunks(path: str) -> list[dict]:
@@ -176,16 +180,21 @@ def build_response(
     }
 
 
-def main() -> None:
-    """Run the interactive RAG query pipeline."""
-    question = input("Question: ")
+def run_query_pipeline(
+    question: str,
+    index,
+    chunks: list[dict],
+) -> dict:
+    """Execute retrieval, generation, and evaluation for one question.
 
-    project_root = Path(__file__).resolve().parent.parent
-    index_path = project_root / FAISS_INDEX_PATH
-    chunks_path = project_root / CHUNKS_PATH
+    Args:
+        question: User question text.
+        index: Loaded FAISS index.
+        chunks: All chunk records from chunks.json.
 
-    index = load_faiss_index(str(index_path))
-    chunks = load_chunks(str(chunks_path))
+    Returns:
+        Complete RAG response payload.
+    """
     question_embedding = embed_query(question)
     similar_chunks = search_similar_chunks(
         question_embedding, index, chunks, TOP_K
@@ -193,10 +202,104 @@ def main() -> None:
     context = build_context(similar_chunks)
     answer = generate_answer(question, context)
     evaluation = evaluate_answer(question, answer, similar_chunks)
-    response = build_response(question, answer, similar_chunks, evaluation)
-    save_query_result(response)
+    return build_response(question, answer, similar_chunks, evaluation)
 
-    print(json.dumps(response, indent=2, ensure_ascii=False))
+
+def _run_spinner(stop_event: threading.Event) -> None:
+    """Display a console loading spinner until stop_event is set.
+
+    Args:
+        stop_event: Threading event that signals spinner shutdown.
+    """
+    frame_index = 0
+    while not stop_event.is_set():
+        frame = _SPINNER_FRAMES[frame_index % len(_SPINNER_FRAMES)]
+        sys.stdout.write(f"\rSearching... {frame}")
+        sys.stdout.flush()
+        frame_index += 1
+        time.sleep(0.1)
+
+
+def run_with_spinner(pipeline_fn) -> dict:
+    """Run a pipeline function while showing a loading spinner.
+
+    Args:
+        pipeline_fn: Callable that returns the pipeline response dict.
+
+    Returns:
+        Response returned by pipeline_fn.
+    """
+    stop_event = threading.Event()
+    spinner_thread = threading.Thread(
+        target=_run_spinner,
+        args=(stop_event,),
+        daemon=True,
+    )
+    spinner_thread.start()
+    try:
+        return pipeline_fn()
+    finally:
+        stop_event.set()
+        spinner_thread.join()
+        sys.stdout.write("\r" + " " * 20 + "\r")
+        sys.stdout.flush()
+
+
+def save_historical_result(response: dict, project_root: Path) -> str:
+    """Persist a query response as an individual historical JSON file.
+
+    Args:
+        response: Console response payload to persist.
+        project_root: Project root directory path.
+
+    Returns:
+        Path to the saved JSON file as a string.
+    """
+    historical_dir = project_root / "outputs" / "historical"
+    historical_dir.mkdir(parents=True, exist_ok=True)
+
+    filename = datetime.now().strftime("%Y%m%d_%H%M%S.json")
+    file_path = historical_dir / filename
+    file_path.write_text(
+        json.dumps(response, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    return str(file_path)
+
+
+def main() -> None:
+    """Run the interactive RAG query pipeline."""
+    print("\n===== Hover HR RAG Query CLI =====\n")
+    print("Type your question and press Enter.")
+    print("Type 'exit' or 'quit' to quit.\n")
+
+    project_root = Path(__file__).resolve().parent.parent
+    index_path = project_root / FAISS_INDEX_PATH
+    chunks_path = project_root / CHUNKS_PATH
+
+    index = load_faiss_index(str(index_path))
+    chunks = load_chunks(str(chunks_path))
+
+    while True:
+        try:
+            question = input("Question: ").strip()
+        except KeyboardInterrupt:
+            print()
+            print("\nBye 👋\n")
+            break
+
+        if question.lower() in ("quit", "exit"):
+            print("\nBye 👋\n")
+            break
+
+        if not question:
+            continue
+
+        response = run_with_spinner(
+            lambda: run_query_pipeline(question, index, chunks)
+        )
+        print(json.dumps(response, indent=2, ensure_ascii=False))
+        save_historical_result(response, project_root)
 
 
 if __name__ == "__main__":
