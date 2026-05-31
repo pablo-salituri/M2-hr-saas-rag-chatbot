@@ -14,7 +14,7 @@ def save_query_result(result: dict) -> str:
     Returns:
         Path to the saved JSON file as a string.
     """
-    project_root = Path(__file__).resolve().parent.parent
+    project_root = Path(__file__).resolve().parent.parent.parent
     historical_dir = project_root / "outputs" / "historical"
     historical_dir.mkdir(parents=True, exist_ok=True)
 

@@ -6,10 +6,10 @@ from pathlib import Path
 # Allow imports when run as: python src/build_index.py
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.chunking import create_chunks, load_document
 from src.config import CHUNKS_PATH, FAQ_DOCUMENT_PATH, FAISS_INDEX_PATH, STORAGE_DIR
-from src.embeddings import generate_embeddings
-from src.vector_store import build_faiss_index, save_chunks, save_faiss_index
+from src.indexing.chunking import create_chunks, load_document
+from src.indexing.embeddings import generate_embeddings
+from src.indexing.vector_store import build_faiss_index, save_chunks, save_faiss_index
 
 
 def main() -> None:

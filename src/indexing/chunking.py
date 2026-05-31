@@ -3,7 +3,7 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from src.config import CHUNK_OVERLAP, CHUNK_SIZE
 
@@ -95,7 +95,9 @@ def get_chunk_statistics(chunks: list[str]) -> dict:
 
 
 if __name__ == "__main__":
-    document_path = Path(__file__).resolve().parent.parent / "data" / "faq_document.txt"
+    document_path = (
+        Path(__file__).resolve().parent.parent.parent / "data" / "faq_document.txt"
+    )
     content = load_document(str(document_path))
     chunks = create_chunks(content)
     stats = get_chunk_statistics(chunks)

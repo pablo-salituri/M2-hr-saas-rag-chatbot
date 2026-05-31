@@ -5,19 +5,19 @@ import os
 import sys
 import threading
 import time
-from datetime import datetime
 from pathlib import Path
 
 import faiss
 import numpy as np
 from openai import OpenAI
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from src.config import CHUNKS_PATH, FAISS_INDEX_PATH, TOP_K
-from src.embeddings import generate_embeddings
-from src.evaluator import evaluate_answer
-from src.input_validation import validate_question
+from src.indexing.embeddings import generate_embeddings
+from src.querying.evaluator import evaluate_answer
+from src.querying.input_validation import validate_question
+from src.utils.output_manager import save_query_result
 
 SYSTEM_PROMPT = """You are a FAQ assistant.
 
@@ -246,35 +246,13 @@ def run_with_spinner(pipeline_fn) -> dict:
         sys.stdout.flush()
 
 
-def save_historical_result(response: dict, project_root: Path) -> str:
-    """Persist a query response as an individual historical JSON file.
-
-    Args:
-        response: Console response payload to persist.
-        project_root: Project root directory path.
-
-    Returns:
-        Path to the saved JSON file as a string.
-    """
-    historical_dir = project_root / "outputs" / "historical"
-    historical_dir.mkdir(parents=True, exist_ok=True)
-
-    filename = datetime.now().strftime("%Y%m%d_%H%M%S.json")
-    file_path = historical_dir / filename
-    file_path.write_text(
-        json.dumps(response, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
-    return str(file_path)
-
-
 def main() -> None:
     """Run the interactive RAG query pipeline."""
     print("\n===== Hover HR RAG Query CLI =====\n")
     print("Type your question and press Enter.")
     print("Type 'exit' or 'quit' to quit.\n")
 
-    project_root = Path(__file__).resolve().parent.parent
+    project_root = Path(__file__).resolve().parent.parent.parent
     index_path = project_root / FAISS_INDEX_PATH
     chunks_path = project_root / CHUNKS_PATH
 
@@ -302,7 +280,7 @@ def main() -> None:
             lambda: run_query_pipeline(question, index, chunks)
         )
         print(json.dumps(response, indent=2, ensure_ascii=False))
-        save_historical_result(response, project_root)
+        save_query_result(response)
 
 
 if __name__ == "__main__":
