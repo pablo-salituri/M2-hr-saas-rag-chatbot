@@ -1,53 +1,61 @@
 [
     {
         "user_question": "How many failed login attempts are allowed?",
-        "system_answer": "Five. Reaching five unsuccessful attempts triggers a 30-minute cryptographic lock on the account identifier.",
+        "system_answer": "Five — reaching five unsuccessful attempts triggers a hard cryptographic lock on the account for 30 minutes.",
         "chunks_related": [
             {
                 "chunk_id": 6,
                 "text": "one lowercase glyph, one Arabic numeral, and one non-alphanumeric character. Furthermore, the system references historical hashes to prevent the reuse of any of the prior four iterations. To mitigate automated credential-stuffing or brute-force vectors, the authentication gateway implements an entry counter. Reaching five unsuccessful attempts triggers a hard cryptographic lock on the account identifier for thirty minutes, overriding standard validation paths and requiring either the expiration of the timer or a manual override by an",
-                "score": 0.5051921010017395
+                "score": 0.5052379369735718
             },
             {
                 "chunk_id": 4,
-                "text": "demands rigorous credential protection mechanisms. Password update routines can be self-administered by end-users or triggered systematically due to corporate expiration lifecycles. On the entry interface, the mechanism labeled 'Forgot Password' triggers an asynchronous authentication workflow. Users must submit their primary identity key, which corresponds to their registered corporate email address. If a matching tenant record exists, the security service issues a cryptographic token appended to a specialized recovery uniform resource locator (URL) dispatched to the",
-                "score": 0.3826158046722412
+                "text": "demands rigorous credential protection mechanisms. Password update routines can be self-administered by end-users or triggered systematically due to corporate expiration lifecycles. On the entry interface, the mechanism labeled \"Forgot Password\" triggers an asynchronous authentication workflow. Users must submit their primary identity key, which corresponds to their registered corporate email address. If a matching tenant record exists, the security service issues a cryptographic token appended to a specialized recovery uniform resource locator (URL) dispatched to the",
+                "score": 0.3826325535774231
             },
             {
                 "chunk_id": 3,
                 "text": "movements, keystrokes, or scrolling actions—are captured by the Document Object Model (DOM) listener for a continuous period of fifteen minutes, the active authorization token is invalidated, the local browser cache is partially flushed, and the client is automatically redirected back to the primary gateway interface. MODULE 2: ACCOUNT SECURITY, ROTATION PROTOCOLS, AND LOCKOUT MATRIX Data integrity within human resources systems demands rigorous credential protection mechanisms. Password update routines can be self-administered by end-users or triggered",
                 "score": 0.3507104516029358
             }
-        ]
+        ],
+        "evaluation": {
+            "score": 8,
+            "reason": "The answer is supported by multiple relevant chunks and appears to address the user's question."
+        }
     },
     {
         "user_question": "How long does a password reset token remain valid?",
-        "system_answer": "The password reset token is valid for exactly sixty minutes (1 hour), after which it is automatically garbage-collected.",
+        "system_answer": "The password reset token is valid for exactly sixty minutes (1 hour); after that it is automatically garbage-collected.",
         "chunks_related": [
             {
                 "chunk_id": 5,
                 "text": "a cryptographic token appended to a specialized recovery uniform resource locator (URL) dispatched to the user's inbox. This token operates under a strict Time-To-Live (TTL) constraint of exactly sixty minutes, after which it undergoes automated garbage collection. The validation engine enforces structural complexity guidelines: new strings must reach a minimum length of twelve characters, combining at least one uppercase glyph, one lowercase glyph, one Arabic numeral, and one non-alphanumeric character. Furthermore, the system references historical",
-                "score": 0.5398374795913696
+                "score": 0.5398239493370056
             },
             {
                 "chunk_id": 4,
-                "text": "demands rigorous credential protection mechanisms. Password update routines can be self-administered by end-users or triggered systematically due to corporate expiration lifecycles. On the entry interface, the mechanism labeled 'Forgot Password' triggers an asynchronous authentication workflow. Users must submit their primary identity key, which corresponds to their registered corporate email address. If a matching tenant record exists, the security service issues a cryptographic token appended to a specialized recovery uniform resource locator (URL) dispatched to the",
-                "score": 0.49328863620758057
+                "text": "demands rigorous credential protection mechanisms. Password update routines can be self-administered by end-users or triggered systematically due to corporate expiration lifecycles. On the entry interface, the mechanism labeled \"Forgot Password\" triggers an asynchronous authentication workflow. Users must submit their primary identity key, which corresponds to their registered corporate email address. If a matching tenant record exists, the security service issues a cryptographic token appended to a specialized recovery uniform resource locator (URL) dispatched to the",
+                "score": 0.4933609962463379
             },
             {
                 "chunk_id": 3,
                 "text": "movements, keystrokes, or scrolling actions—are captured by the Document Object Model (DOM) listener for a continuous period of fifteen minutes, the active authorization token is invalidated, the local browser cache is partially flushed, and the client is automatically redirected back to the primary gateway interface. MODULE 2: ACCOUNT SECURITY, ROTATION PROTOCOLS, AND LOCKOUT MATRIX Data integrity within human resources systems demands rigorous credential protection mechanisms. Password update routines can be self-administered by end-users or triggered",
-                "score": 0.4628608226776123
+                "score": 0.46289464831352234
             }
-        ]
+        ],
+        "evaluation": {
+            "score": 10,
+            "reason": "The answer is supported by multiple relevant chunks and appears to address the user's question."
+        }
     },
     {
         "user_question": "What is the company's stock symbol?",
-        "system_answer": "The information is not available in the documentation.",
+        "system_answer": "The company's stock symbol is not provided in the supplied FAQ document.",
         "chunks_related": [
             {
                 "chunk_id": 16,
-                "text": "initial date requested to ensure business continuity across operational teams. The financial orchestration engine handles compensation structures, tax withholdings, benefit deductions, and digital ledger disbursements. The operational cadence is strictly bi-weekly, occurring on alternating Thursdays of each fiscal month, with clearing houses releasing funds to banking networks for credit availability by Friday morning. The background processing architecture aggregates multi-source vectors: historical tracking logs from timecards, approved overtime differentials, and the base compensation matrix tied to",
+                "text": "initial date requested to ensure business continuity across operational teams. The financial orchestration engine handles compensation structures, tax withholdings, benefit deductions, and digital ledger disbursements. The operational cadence is strictly bi-weekly, occurring on alternating Thursdays of each fiscal month, with clearing houses releasing funds to banking networks for credit availability by Friday morning. The background processing architecture aggregates multi-source vectors: historical tracking logs from timecards, approved overtime differentials, and the base compensation matrix tied to",  
                 "score": 0.22374415397644043
             },
             {
@@ -57,9 +65,13 @@
             },
             {
                 "chunk_id": 21,
-                "text": "For anomalies involving missing real-time transactional alerts or account validation communications, users must inspect local email security filters and confirm that outbound notifications originating from [no-reply@hoverhr.com](mailto:no-reply@hoverhr.com) are whitelisted within enterprise firewalls. When diagnostic paths do not clear an interface blockage or if software behaviors indicate a core service disruption, users can activate the formal technical support escalation protocol. The organization provides distinct communication pathways based on the severity classification of the incident and the contractual",
+                "text": "For anomalies involving missing real-time transactional alerts or account validation communications, users must inspect local email security filters and confirm that outbound notifications originating from no-reply@hoverhr.com are whitelisted within enterprise firewalls. When diagnostic paths do not clear an interface blockage or if software behaviors indicate a core service disruption, users can activate the formal technical support escalation protocol. The organization provides distinct communication pathways based on the severity classification of the incident and the contractual",
                 "score": 0.2115551233291626
             }
-        ]
+        ],
+        "evaluation": {
+            "score": 5,
+            "reason": "The answer shows limited support from retrieved chunks or may not fully address the question."
+        }
     }
 ]
