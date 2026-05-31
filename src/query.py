@@ -17,14 +17,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from src.config import CHUNKS_PATH, FAISS_INDEX_PATH, TOP_K
 from src.embeddings import generate_embeddings
 from src.evaluator import evaluate_answer
+from src.input_validation import validate_question
 
-SYSTEM_PROMPT = """You are an internal HR support assistant.
+SYSTEM_PROMPT = """You are a FAQ assistant.
 
 Answer only using the provided context.
 
-If the answer cannot be found in the context, say:
+If the answer cannot be found in the provided context, state that the information is not available in the FAQ document.
 
-"The information is not available in the documentation."
+Do not invent information.
 
 Keep answers concise and factual."""
 
@@ -292,7 +293,9 @@ def main() -> None:
             print("\nBye 👋\n")
             break
 
-        if not question:
+        is_valid, error_message = validate_question(question)
+        if not is_valid:
+            print(error_message)
             continue
 
         response = run_with_spinner(

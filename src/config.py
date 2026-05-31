@@ -5,6 +5,8 @@ CHUNK_OVERLAP = 15
 
 TOP_K = 3
 
+MAX_QUERY_LENGTH = 500
+
 DATA_DIR = "data"
 STORAGE_DIR = "storage"
 
