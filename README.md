@@ -84,7 +84,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Dependencies are listed in `requirements.txt` (with pinned versions). Do not edit versions in this README; refer to that file for the exact package versions.
+Dependencies are listed in `requirements.txt`. Refer to that file for the exact package versions.
 
 ---
 
@@ -116,19 +116,6 @@ CHAT_MODEL=
 | `EMBEDDING_MODEL` | Model used to embed FAQ chunks and user questions (default in template: `text-embedding-3-small`) |
 | `CHAT_MODEL` | Model used to generate answers from retrieved context (default in template: `gpt-5-mini`) |
 
-**Linux / macOS:**
-
-```bash
-export OPENAI_API_KEY=your-key-here
-```
-
-**Windows (PowerShell):**
-
-```powershell
-$env:OPENAI_API_KEY="your-key-here"
-```
-
-Alternatively, place values in a `.env` file at the project root; `python-dotenv` loads them when the pipelines run.
 
 ---
 
@@ -148,7 +135,6 @@ This script:
 4. **Builds** a FAISS index for similarity search
 5. **Persists** artifacts under `storage/` (`faiss.index`, `chunks.json`)
 
-Run this command after changing the FAQ document or chunking settings, before querying.
 
 ---
 
