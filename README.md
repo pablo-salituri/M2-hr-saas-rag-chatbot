@@ -66,16 +66,9 @@ python -m venv .venv
 
 ### 3. Activate the environment
 
-**Linux / macOS:**
 
 ```bash
-source .venv/bin/activate
-```
-
-**Windows (PowerShell):**
-
-```powershell
-.venv\Scripts\Activate.ps1
+source .venv/Scripts/activate
 ```
 
 ### 4. Install dependencies
@@ -311,7 +304,7 @@ Current packages (see file for pinned versions):
 ```bash
 # 1. Setup
 python -m venv .venv
-source .venv/bin/activate          # or .venv\Scripts\Activate.ps1 on Windows
+source .venv/Scripts/activate
 pip install -r requirements.txt
 cp .env.example .env               # then edit OPENAI_API_KEY
 
