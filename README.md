@@ -1,4 +1,4 @@
-# Hover HR — FAQ RAG Chatbot
+# HR — FAQ RAG Chatbot
 
 ## Project Overview
 

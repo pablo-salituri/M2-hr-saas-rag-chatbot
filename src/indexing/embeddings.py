@@ -9,17 +9,8 @@ load_dotenv()
 
 
 def generate_embeddings(texts: list[str]) -> list[list[float]]:
-    """Generate embedding vectors for a list of text chunks.
-
-    Args:
-        texts: Ordered list of chunk strings.
-
-    Returns:
-        List of embedding vectors in the same order as texts.
-
-    Raises:
-        ValueError: If required environment variables are missing.
-    """
+    # Returns list of embedding vectors in the same order as texts.
+    
     api_key = os.getenv("OPENAI_API_KEY")
     model = os.getenv("EMBEDDING_MODEL")
 

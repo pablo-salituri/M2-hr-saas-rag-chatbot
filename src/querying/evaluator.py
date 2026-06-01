@@ -57,26 +57,18 @@ _STOP_WORDS = frozenset(
 
 
 def _tokenize(text: str) -> set[str]:
-    """Extract meaningful lowercase tokens from text.
-
-    Args:
-        text: Input text.
-
-    Returns:
-        Set of tokens with stop words removed.
+    """
+    Extracts meaningful lowercase tokens from text.
+    Returns a set of tokens with stop words removed.
     """
     words = re.findall(r"[a-z0-9]+", text.lower())
     return {word for word in words if word not in _STOP_WORDS and len(word) > 1}
 
 
 def _average_retrieval_score(chunks: list) -> float:
-    """Compute the average FAISS score across retrieved chunks.
-
-    Args:
-        chunks: Retrieved chunk records.
-
-    Returns:
-        Average retrieval score, or 0.0 when scores are unavailable.
+    """
+    Computes the average FAISS score across retrieved chunks.
+    Returns the average retrieval score, or 0.0 when scores are unavailable.
     """
     scores = [
         float(chunk["score"])
@@ -89,14 +81,9 @@ def _average_retrieval_score(chunks: list) -> float:
 
 
 def _lexical_overlap(source_tokens: set[str], target_text: str) -> float:
-    """Measure how much of source_tokens appears in target_text.
-
-    Args:
-        source_tokens: Tokens to match against the target.
-        target_text: Text to search for overlaps.
-
-    Returns:
-        Overlap ratio between 0.0 and 1.0.
+    """
+    Measures how much of source_tokens appears in target_text.
+    Returns an overlap ratio between 0.0 and 1.0.
     """
     if not source_tokens:
         return 0.0
@@ -107,14 +94,9 @@ def _lexical_overlap(source_tokens: set[str], target_text: str) -> float:
 
 
 def _score_relevance(question_tokens: set[str], chunks: list) -> int:
-    """Score whether retrieved chunks appear related to the question.
-
-    Args:
-        question_tokens: Tokenized question content.
-        chunks: Retrieved chunk records.
-
-    Returns:
-        Relevance score between 0 and 5.
+    """
+    Scores whether retrieved chunks appear related to the question.
+    Returns relevance score between 0 and 5.
     """
     if not chunks:
         return 0
@@ -147,15 +129,9 @@ def _score_completeness(
     answer: str,
     chunks: list,
 ) -> int:
-    """Score whether the answer appears sufficient and grounded in chunks.
-
-    Args:
-        question_tokens: Tokenized question content.
-        answer: Generated system answer.
-        chunks: Retrieved chunk records.
-
-    Returns:
-        Completeness score between 0 and 5.
+    """
+    Scores whether the answer appears sufficient and grounded in chunks.
+    Returns completeness score between 0 and 5.
     """
     score = 0
     answer_tokens = _tokenize(answer)
@@ -182,15 +158,9 @@ def evaluate_answer(
     system_answer: str,
     chunks_related: list,
 ) -> dict:
-    """Evaluate a RAG response using simple deterministic heuristics.
-
-    Args:
-        user_question: Original user question.
-        system_answer: Generated answer from the RAG pipeline.
-        chunks_related: Retrieved chunks related to the answer.
-
-    Returns:
-        Dictionary with integer score (0-10) and textual reason.
+    """
+    Evaluates a RAG response using simple deterministic heuristics.
+    Returns a dictionary with integer score (0-10) and textual reason.
     """
     if not user_question or not user_question.strip():
         return {
@@ -260,42 +230,3 @@ def evaluate_answer(
         )
 
     return {"score": score, "reason": reason}
-
-
-if __name__ == "__main__":
-    result = evaluate_answer(
-        user_question="How many failed login attempts are allowed?",
-        system_answer=(
-            "Five. Reaching five unsuccessful attempts triggers a "
-            "30-minute cryptographic lock on the account identifier."
-        ),
-        chunks_related=[
-            {
-                "chunk_id": 6,
-                "text": (
-                    "Reaching five unsuccessful attempts triggers a hard "
-                    "cryptographic lock on the account identifier for thirty "
-                    "minutes."
-                ),
-                "score": 0.505,
-            },
-            {
-                "chunk_id": 4,
-                "text": (
-                    "Password update routines can be self-administered by "
-                    "end-users or triggered systematically due to corporate "
-                    "expiration lifecycles."
-                ),
-                "score": 0.383,
-            },
-            {
-                "chunk_id": 3,
-                "text": (
-                    "Data integrity within human resources systems demands "
-                    "rigorous credential protection mechanisms."
-                ),
-                "score": 0.351,
-            },
-        ],
-    )
-    print(result)

@@ -6,13 +6,9 @@ from pathlib import Path
 
 
 def save_query_result(result: dict) -> str:
-    """Persist a query result as a timestamped JSON file.
-
-    Args:
-        result: Query payload with question, answer, chunks, and evaluation.
-
-    Returns:
-        Path to the saved JSON file as a string.
+    """
+    Persists a query result as a timestamped JSON file.
+    Returns the path to the saved JSON file as a string.
     """
     project_root = Path(__file__).resolve().parent.parent.parent
     historical_dir = project_root / "outputs" / "historical"

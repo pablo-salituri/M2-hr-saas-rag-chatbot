@@ -33,37 +33,21 @@ _SPINNER_FRAMES = ("|", "/", "-", "\\")
 
 
 def load_chunks(path: str) -> list[dict]:
-    """Load chunk records from a JSON file.
+    # Returns the list of chunk dictionaries with chunk_id and text.
 
-    Args:
-        path: Path to chunks.json.
-
-    Returns:
-        List of chunk dictionaries with chunk_id and text.
-    """
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
 def load_faiss_index(path: str):
-    """Load a persisted FAISS index from disk.
-
-    Args:
-        path: Path to faiss.index.
-
-    Returns:
-        The loaded FAISS index.
-    """
+    # Loads and returns the persisted FAISS index from disk.
+    
     return faiss.read_index(path)
 
 
 def embed_query(question: str) -> list[float]:
-    """Generate an embedding vector for a user question.
-
-    Args:
-        question: User question text.
-
-    Returns:
-        Embedding vector for the question.
+    """
+    Generates an embedding vector for a user question.
+    Returns the embedding vector for the question.
     """
     return generate_embeddings([question])[0]
 
@@ -74,16 +58,9 @@ def search_similar_chunks(
     chunks: list[dict],
     top_k: int,
 ) -> list[dict]:
-    """Search FAISS for the most similar chunks to a question embedding.
-
-    Args:
-        question_embedding: Query embedding vector.
-        index: Loaded FAISS index.
-        chunks: All chunk records from chunks.json.
-        top_k: Number of results to retrieve.
-
-    Returns:
-        Top matching chunks with chunk_id, text, and FAISS similarity score.
+    """
+    Searches the FAISS index for the most similar chunks to a question embedding.
+    Returns the top matching chunks with chunk_id, text, and FAISS similarity score.
     """
     query_vector = np.array([question_embedding], dtype=np.float32)
     faiss.normalize_L2(query_vector)
@@ -108,30 +85,18 @@ def search_similar_chunks(
 
 
 def build_context(chunks: list[dict]) -> str:
-    """Concatenate retrieved chunks into a single context string.
-
-    Args:
-        chunks: Retrieved chunks ordered by relevance.
-
-    Returns:
-        Formatted context for the LLM prompt.
+    """
+    Concatenates the retrieved chunks into a single context string.
+    Returns the formatted context for the LLM prompt.
     """
     parts = [f"Chunk {i}:\n{chunk['text']}" for i, chunk in enumerate(chunks, start=1)]
     return "\n\n".join(parts)
 
 
 def generate_answer(question: str, context: str) -> str:
-    """Generate an answer using OpenAI chat completions and retrieved context.
-
-    Args:
-        question: User question.
-        context: Retrieved chunk context.
-
-    Returns:
-        LLM-generated answer string.
-
-    Raises:
-        ValueError: If required environment variables are missing.
+    """
+    Generates an answer using OpenAI chat completions and retrieved context.
+    Returns the LLM-generated answer string.
     """
     api_key = os.getenv("OPENAI_API_KEY")
     model = os.getenv("CHAT_MODEL")
@@ -161,17 +126,9 @@ def build_response(
     chunks: list[dict],
     evaluation: dict,
 ) -> dict:
-    """Build the final RAG response payload.
-
-    Args:
-        question: Original user question.
-        answer: LLM-generated answer.
-        chunks: Retrieved chunks with scores.
-        evaluation: Evaluator result with score and reason.
-
-    Returns:
-        Response dictionary with user_question, system_answer, chunks_related,
-        and evaluation.
+    """
+    Builds the final RAG response payload.
+    Returns a response dictionary with user_question, system_answer, chunks_related and evaluation.
     """
     return {
         "user_question": question,
@@ -181,20 +138,10 @@ def build_response(
     }
 
 
-def run_query_pipeline(
-    question: str,
-    index,
-    chunks: list[dict],
-) -> dict:
-    """Execute retrieval, generation, and evaluation for one question.
-
-    Args:
-        question: User question text.
-        index: Loaded FAISS index.
-        chunks: All chunk records from chunks.json.
-
-    Returns:
-        Complete RAG response payload.
+def run_query_pipeline(question: str, index, chunks: list[dict]) -> dict:
+    """
+    Executes the retrieval, generation, and evaluation for one question.
+    Returns the complete RAG response payload.
     """
     question_embedding = embed_query(question)
     similar_chunks = search_similar_chunks(
@@ -207,11 +154,6 @@ def run_query_pipeline(
 
 
 def _run_spinner(stop_event: threading.Event) -> None:
-    """Display a console loading spinner until stop_event is set.
-
-    Args:
-        stop_event: Threading event that signals spinner shutdown.
-    """
     frame_index = 0
     while not stop_event.is_set():
         frame = _SPINNER_FRAMES[frame_index % len(_SPINNER_FRAMES)]
@@ -222,14 +164,6 @@ def _run_spinner(stop_event: threading.Event) -> None:
 
 
 def run_with_spinner(pipeline_fn) -> dict:
-    """Run a pipeline function while showing a loading spinner.
-
-    Args:
-        pipeline_fn: Callable that returns the pipeline response dict.
-
-    Returns:
-        Response returned by pipeline_fn.
-    """
     stop_event = threading.Event()
     spinner_thread = threading.Thread(
         target=_run_spinner,
@@ -237,6 +171,7 @@ def run_with_spinner(pipeline_fn) -> dict:
         daemon=True,
     )
     spinner_thread.start()
+
     try:
         return pipeline_fn()
     finally:
@@ -247,8 +182,8 @@ def run_with_spinner(pipeline_fn) -> dict:
 
 
 def main() -> None:
-    """Run the interactive RAG query pipeline."""
-    print("\n===== Hover HR RAG Query CLI =====\n")
+    """Runs the query pipeline."""
+    print("\n===== HR RAG Query CLI =====\n")
     print("Type your question and press Enter.")
     print("Type 'exit' or 'quit' to quit.\n")
 

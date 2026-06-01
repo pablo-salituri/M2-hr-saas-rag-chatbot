@@ -8,14 +8,8 @@ import numpy as np
 
 
 def build_faiss_index(embeddings: list[list[float]]):
-    """Build a FAISS index for cosine similarity on normalized vectors.
+    # Returns a FAISS index containing all normalized vectors.
 
-    Args:
-        embeddings: List of embedding vectors.
-
-    Returns:
-        A FAISS index containing all vectors.
-    """
     if not embeddings:
         raise ValueError("embeddings must not be empty")
 
@@ -30,22 +24,14 @@ def build_faiss_index(embeddings: list[list[float]]):
 
 
 def save_faiss_index(index, path: str) -> None:
-    """Persist a FAISS index to disk.
+    # Persist a FAISS index to disk.
 
-    Args:
-        index: FAISS index to save.
-        path: Output file path.
-    """
     faiss.write_index(index, path)
 
 
 def save_chunks(chunks: list[str], path: str) -> None:
-    """Persist chunks as JSON with logical chunk ids.
+    # Persist chunks as JSON with logical chunk ids.
 
-    Args:
-        chunks: Ordered list of chunk strings.
-        path: Output JSON file path.
-    """
     payload = [
         {"chunk_id": i, "text": text}
         for i, text in enumerate(chunks)
